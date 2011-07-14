@@ -15,8 +15,14 @@
 <tr>
 <td>
 
-<table class="layer-controls">
+<select id="{{block.id}}-basemap-control"
+onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
+{% for basemap in block.basemap_set.all %}
+<option value="{% thumbnail basemap.image 600x600 %}">{{basemap.name}}</option>
+{% endfor %}
+</select><br />
 
+<table class="layer-controls">
 {% for layer in block.layer_set.all %}
 <tr>
 <td><div class="layer-box" style="background-color:
@@ -36,7 +42,7 @@
 </td>
 <td>
 <div id="{{block.id}}-base" class="careermap-base">
-<img alt="career map" src="{% thumbnail block.base_map 600x600 %}" />
+<img id="{{block.id}}-basemap" alt="career map" src="{% thumbnail block.default_base_map.image 600x600 %}" />
 
 {% for layer in block.layer_set.all %}
 <img id="layer-{{layer.id}}" src="/uploads/{{layer.image}}"

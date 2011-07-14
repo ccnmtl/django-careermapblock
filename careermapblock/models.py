@@ -13,10 +13,6 @@ import os
 class CareerMap(models.Model):
     pageblocks = generic.GenericRelation(PageBlock)
     description = models.TextField(blank=True)
-    base_map = ImageWithThumbnailsField(upload_to="images/careermapblock/base_maps/%Y/%m/%d",
-                                        thumbnail = {'size' : (65,65)},
-                                        extra_thumbnails={'admin': {'size': (70, 50),'options': ('sharpen',),}})
-
     template_file = "careermapblock/careermapblock.html"
 
     display_name = "Career Map"
@@ -27,57 +23,28 @@ class CareerMap(models.Model):
     def __unicode__(self):
         return unicode(self.pageblock())
 
-    def save_image(self,f):
-        ext = f.name.split(".")[-1].lower()
-        basename = slugify(f.name.split(".")[-2].lower())[:20]
-        if ext not in ['jpg','jpeg','gif','png']:
-            # unsupported image format
-            return None
-        now = datetime.now()
-        path = "images/careermapblock/base_maps/%04d/%02d/%02d/" % (now.year,now.month,now.day)
-        try:
-            os.makedirs(settings.MEDIA_ROOT + "/" + path)
-        except:
-            pass
-        full_filename = path + "%s.%s" % (basename,ext)
-        fd = open(settings.MEDIA_ROOT + "/" + full_filename,'wb')
-        for chunk in f.chunks():
-            fd.write(chunk)
-        fd.close()
-        self.base_map = full_filename
-        self.save()
-
     def edit_form(self):
         class EditForm(forms.Form):
-            base_map = forms.FileField(label="replace base map")
             description = forms.CharField(initial=self.description,
                                           widget=forms.widgets.Textarea())
-            alt_text = "<a href=\"" + reverse("edit-careermap-layers",args=[self.id]) + "\">layers</a><br />" + \
+            alt_text = "<a href=\"" + reverse("edit-careermap-basemaps",args=[self.id]) + "\">base maps</a><br />" + \
+                "<a href=\"" + reverse("edit-careermap-layers",args=[self.id]) + "\">layers</a><br />" + \
                 "<a href=\"" + reverse("edit-careermap-questions",args=[self.id]) + "\">questions</a>" 
         return EditForm()
 
-    def edit(self,vals,files):
+    def edit(self,vals,files=None):
         self.description = vals.get('description','')
-        if 'base_map' in files:
-            self.save_image(files['base_map'])
         self.save()
-
 
     @classmethod
     def add_form(self):
         class AddForm(forms.Form):
-            base_map = forms.FileField(label="select base map")
             description = forms.CharField(widget=forms.widgets.Textarea())
         return AddForm()
 
     @classmethod
     def create(self,request):
-        if 'base_map' in request.FILES:
-            cm = CareerMap.objects.create(description=request.POST.get('description', ''),
-                                          base_map="")
-            cm.save_image(request.FILES['base_map'])
-            return cm
-        return None
+        return CareerMap.objects.create(description=request.POST.get('description', ''))
 
     def needs_submit(self):
         return True
@@ -103,6 +70,63 @@ class CareerMap(models.Model):
 
     def update_layers_order(self,layer_ids):
         self.set_layer_order(layer_ids)
+
+    def add_basemap_form(self,request=None,files=None):
+        return BaseMapForm(request,files)
+
+    def update_basemaps_order(self,basemap_ids):
+        self.set_basemap_order(basemap_ids)
+
+    def default_base_map(self):
+        return self.basemap_set.all()[0]
+
+class BaseMap(models.Model):
+    cmap = models.ForeignKey(CareerMap)
+    name = models.CharField(max_length=256,default="")
+    image = ImageWithThumbnailsField(upload_to="images/careermapblock/base_maps/%Y/%m/%d",
+                                     thumbnail = {
+            'size' : (65,65)
+            },
+                                     extra_thumbnails={
+            'admin': {
+                'size': (70, 50),
+                'options': ('sharpen',),
+                }
+            })
+    class Meta:
+        order_with_respect_to = 'cmap'
+
+    def edit_form(self):
+        class EditForm(forms.Form):
+            image = forms.FileField(label="replace image")
+            name = forms.CharField(initial=self.name)
+        return EditForm()
+
+    def edit(self,vals,files):
+        self.name = vals.get('name','')
+        if 'image' in files:
+            self.save_image(files['image'])
+        self.save()
+
+    def save_image(self,f):
+        ext = f.name.split(".")[-1].lower()
+        basename = slugify(f.name.split(".")[-2].lower())[:20]
+        if ext not in ['jpg','jpeg','gif','png']:
+            # unsupported image format
+            return None
+        now = datetime.now()
+        path = "images/careermapblock/base_map/%04d/%02d/%02d/" % (now.year,now.month,now.day)
+        try:
+            os.makedirs(settings.MEDIA_ROOT + "/" + path)
+        except:
+            pass
+        full_filename = path + "%s.%s" % (basename,ext)
+        fd = open(settings.MEDIA_ROOT + "/" + full_filename,'wb')
+        for chunk in f.chunks():
+            fd.write(chunk)
+        fd.close()
+        self.image = full_filename
+        self.save()
 
 
 class Layer(models.Model):
@@ -183,3 +207,9 @@ class LayerForm(forms.ModelForm):
         model = Layer
         exclude = ("cmap",)
         fields = ('name', 'color', 'image')
+
+class BaseMapForm(forms.ModelForm):
+    class Meta:
+        model = BaseMap
+        exclude = ("cmap",)
+        fields = ('name', 'image')

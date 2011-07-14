@@ -1,4 +1,4 @@
-from models import CareerMap, Question, Layer, Response
+from models import CareerMap, Question, Layer, Response, BaseMap
 
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
@@ -21,6 +21,12 @@ class rendered_with(object):
 
 @rendered_with('careermapblock/edit_layers.html')
 def edit_layers(request,id):
+    cmap = get_object_or_404(CareerMap,id=id)
+    section = cmap.pageblock().section
+    return dict(cmap=cmap,section=section)
+
+@rendered_with('careermapblock/edit_basemaps.html')
+def edit_basemaps(request,id):
     cmap = get_object_or_404(CareerMap,id=id)
     section = cmap.pageblock().section
     return dict(cmap=cmap,section=section)
@@ -118,4 +124,50 @@ def edit_layer(request,id):
         layer.save()
         return HttpResponseRedirect(reverse("edit-careermap-layer",args=[layer.id]))
     return dict(layer=layer)
+
+
+def delete_basemap(request,id):
+    basemap = get_object_or_404(BaseMap,id=id)
+    if request.method == "POST":
+        cmap = basemap.cmap
+        basemap.delete()
+        return HttpResponseRedirect(reverse("edit-careermap-basemaps",args=[cmap.id]))
+    return HttpResponse("""
+<html><body><form action="." method="post">Are you Sure?
+<input type="submit" value="Yes, delete it" /></form></body></html>
+""")
+
+def reorder_basemaps(request,id):
+    if request.method != "POST":
+        return HttpResponse("only use POST for this", status=400)
+    cmap = get_object_or_404(CareerMap,id=id)
+    keys = request.GET.keys()
+    basemap_keys = [int(k[len('basemap_'):]) for k in keys if k.startswith('basemap_')]
+    basemap_keys.sort()
+    basemaps = [int(request.GET['basemap_' + str(k)]) for k in basemap_keys]
+    cmap.update_basemaps_order(basemaps)
+    return HttpResponse("ok")
+
+
+def add_basemap(request,id):
+    cmap = get_object_or_404(CareerMap,id=id)
+    form = cmap.add_basemap_form(request.POST,request.FILES)
+    if form.is_valid():
+        basemap = form.save(commit=False)
+        basemap.cmap = cmap
+        basemap.save()
+    else:
+        print "form was not valid"
+        print form.errors
+    return HttpResponseRedirect(reverse("edit-careermap-basemaps",args=[cmap.id]))
+
+@rendered_with('careermapblock/edit_basemap.html')
+def edit_basemap(request,id):
+    basemap = get_object_or_404(BaseMap,id=id)
+    if request.method == "POST":
+        form = basemap.edit_form(request.POST)
+        basemap = form.save(commit=False)
+        basemap.save()
+        return HttpResponseRedirect(reverse("edit-careermap-basemap",args=[basemap.id]))
+    return dict(basemap=basemap)
 
