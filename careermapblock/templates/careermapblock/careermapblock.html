@@ -1,0 +1,98 @@
+{% load markup %}
+{% load thumbnail %}
+
+
+
+<div class="careermaptabs">
+<ul>
+  <li><a href="#{{block.id}}-map">map</a></li>
+  <li><a href="#{{block.id}}-questions">questions</a></li>
+</ul>
+
+<div id="{{block.id}}-map">
+
+<table>
+<tr>
+<td>
+
+<table class="layer-controls">
+
+{% for layer in block.layer_set.all %}
+<tr>
+<td><div class="layer-box" style="background-color:
+			      {{layer.color}};"> </div>
+</td>
+<td>
+<a href="#layer-{{layer.id}}" onclick="jQuery('#layer-{{layer.id}}').toggle()">{{layer.name}}    </a></li>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="description">
+{{block.description|markdown}}
+</div>
+
+</td>
+<td>
+<div id="{{block.id}}-base" class="careermap-base">
+<img alt="career map" src="{% thumbnail block.base_map 600x600 %}" />
+
+{% for layer in block.layer_set.all %}
+<img id="layer-{{layer.id}}" src="/uploads/{{layer.image}}"
+     class="careermap-layer" />
+{% endfor %}
+
+</div>
+
+[[data table will go here]]
+
+</td>
+</tr></table>
+
+
+
+</div>
+
+
+
+<div id="{{block.id}}-questions">
+{% if request.user.is_anonymous %}
+<p class="warning">You must be logged in to view this content</p>
+{% else %}
+{% for question in block.question_set.all %}
+<textarea rows="10" name="pageblock-{{block.pageblock.id}}-question{{question.id}}">
+{{question.text}}
+</textarea><br />
+{% endfor %}
+{% endif %}
+</div>
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" ></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/jquery-ui.min.js"
+	type="text/javascript"></script> 
+
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/base/jquery-ui.css" type="text/css" media="all" /> 
+<link rel="stylesheet" href="http://static.jquery.com/ui/css/demo-docs-theme/ui.theme.css" type="text/css" media="all" /> 
+<script>
+jQuery(function() {
+		jQuery( ".careermaptabs" ).tabs();
+                jQuery( ".careermap-layer").hide();
+	});
+</script>
+
+<style type="text/css">
+.careermap-base {
+position: relative;
+}
+.careermap-layer {
+position: absolute;
+top: 0px;
+left: 0px;
+}
+	.layer-box { width: 20px; height: 20px; 
+        margin-right: 5px;}
+
+</style>
