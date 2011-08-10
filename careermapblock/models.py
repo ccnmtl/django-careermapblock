@@ -14,6 +14,8 @@ class CareerMap(models.Model):
     pageblocks = generic.GenericRelation(PageBlock)
     description = models.TextField(blank=True)
     template_file = "careermapblock/careermapblock.html"
+    js_template_file = "careermapblock/careermapblock_js.html"
+    css_template_file = "careermapblock/careermapblock_css.html"
 
     display_name = "Career Map"
 
