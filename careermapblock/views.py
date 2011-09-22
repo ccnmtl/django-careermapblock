@@ -3,7 +3,6 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
-import IPython
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -140,7 +139,7 @@ def edit_layer(request,id):
             if form.errors == {'county_stat_types': [u'This field is required.']}:
                 pass #this field is NOT required.  TODO fix this.
             else:
-                IPython.embed()
+                pass
         layer.save()
         
         return HttpResponseRedirect(reverse("edit-careermap-layer",args=[layer.id]))
@@ -200,7 +199,7 @@ def edit_basemap(request,id):
             if form.errors == {'county_stat_types': [u'This field is required.']}:
                 pass #this field is NOT required. TODO fix this.
             else:
-                IPython.embed()
+                pass
         basemap.save()
         return HttpResponseRedirect(reverse("edit-careermap-basemap",args=[basemap.id]))
     return dict(basemap=basemap)
