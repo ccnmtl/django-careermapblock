@@ -4,19 +4,31 @@
 
 
 <div class="careermaptabs">
+<!--
 <ul>
   <li><a href="#{{block.id}}-map">map</a></li>
   <li><a href="#{{block.id}}-questions">questions</a></li>
 </ul>
-
+-->
 <div id="{{block.id}}-map">
+
 
 <table>
 <tr>
 <td>
 
+<div class="description">
+{{block.description|markdown}}
+</div>
+
+
+Choose base map:
 <select id="{{block.id}}-basemap-control"
 onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
+<!--
+<option value="null">Choose Base Map</option> 
+-->
+<!-- what happens when you choose this? -->
 {% for basemap in block.basemap_set.all %}
 <option value="{% thumbnail basemap.image 600x600 %}">{{basemap.name}}</option>
 {% endfor %}
@@ -35,8 +47,11 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 {% endfor %}
 </table>
 
-<div class="description">
-{{block.description|markdown}}
+
+<div class="did_you_know_container">
+    <div class ="did_you_know_title">Did you know?</div>
+    <div class ="did_you_know_content">did you know that x?</div>
+
 </div>
 
 </td>
@@ -51,7 +66,56 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 
 </div>
 
-[[data table will go here]]
+
+<div>
+
+{%with block.per_county_stats as stats%}
+<table >
+
+
+<tr>
+    <th>Statistic</th>
+    {%for s in stats.stat_type_list %}
+        <th>{{s}} <span class="stat_id_container">(#<span class ="stat_id">{{s.id}}</span>)</span></th>
+    {%endfor %}
+</tr>
+<tr id = "layer_row">
+    <th>Layers</th>
+    {%for all_layers in stats.layers%}
+        <td>
+            <span class ="list_of_layers">
+                {%for layer in all_layers%}
+                    <span class="layer_id">{{layer}} (#{{layer.id}})</span>
+                {%endfor%}
+            </span>
+        </td>
+    {%endfor %}
+</tr>
+<tr id = "basemap_row">
+    <th>Basemaps</th>
+    {%for all_basemaps in stats.basemaps %}
+        <td>
+            <span class ="list_of_basemaps">
+            {%for b in all_basemaps %}
+                <span>{{b.name}} (#{{b.id}})</span>
+            {%endfor %}
+            </span>
+        </td>
+    {%endfor %}
+</tr>
+
+{%for county, stat_values in stats.counties.items %}
+<tr>
+    <th>{{county}}</th>
+    {%for value in stat_values %}
+            <td>{{value}}</td>
+    {%endfor %}
+</tr>
+{%endfor %}
+</tr>
+</table>
+{%endwith%}
+</div>
 
 </td>
 </tr></table>
@@ -61,7 +125,7 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 </div>
 
 
-
+<!--
 <div id="{{block.id}}-questions">
 {% if request.user.is_anonymous %}
 <p class="warning">You must be logged in to view this content</p>
@@ -73,7 +137,7 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 {% endfor %}
 {% endif %}
 </div>
-
+-->
 </div>
 
 

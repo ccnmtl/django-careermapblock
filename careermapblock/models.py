@@ -101,6 +101,28 @@ class CareerMap(models.Model):
         return self.basemap_set.all()[0]
         
         
+    def per_county_stats (self):
+        """ Return all the stats associated with this basemap """
+        county_list = self.county_set.all()
+        all_stat_types = set()
+        for layer in self.layer_set.all():
+            all_stat_types.update(layer.county_stat_types.all())
+        for basemap in self.basemap_set.all():
+            all_stat_types.update(basemap.county_stat_types.all())
+        #import pdb
+        #pdb.set_trace()
+        stat_type_list = list(all_stat_types)
+        
+        result = {'stat_type_list' : stat_type_list, 'counties' : {} }
+        
+        result['layers']    =  [stat_type.layer_set.all()    for stat_type in stat_type_list]
+        result['basemaps']  =  [stat_type.basemap_set.all()  for stat_type in stat_type_list]
+        
+        for county in county_list:
+            for stat_type in stat_type_list:
+                result ['counties'][county] = [ county.value_of_stat (t) for t in stat_type_list ]
+                        
+        return result
 
 class CountyStatType(models.Model):
     """County_stat_type
@@ -154,10 +176,6 @@ class BaseMap(models.Model):
 
     def __unicode__(self):
         return self.name or "BaseMap ID %d" % self.id
-
-    def table_of_per_county_stat_types (self):
-        """ Return all the stats associated with this basemap """
-        return None
 
     def save_image(self,f):
         ext = f.name.split(".")[-1].lower()
@@ -283,6 +301,12 @@ class County(models.Model):
 
     def edit_form(self,request=None):
       return CountyForm(request, instance=self)
+
+    def value_of_stat (self, the_stat_type):
+        try:
+            return CountyStatValue.objects.get(county=self, stat_type = the_stat_type).value
+        except:
+            return None
       
 class CountyForm(forms.ModelForm):
     class Meta:
@@ -309,9 +333,6 @@ class CountyStatValue(models.Model):
     stat_type = models.ForeignKey(CountyStatType)
     county = models.ForeignKey(County)
     value = models.FloatField()
-    
-
-
                             
                             
 class Question(models.Model):

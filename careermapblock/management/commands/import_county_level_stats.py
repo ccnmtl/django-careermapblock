@@ -26,13 +26,13 @@ class Command(BaseCommand):
     args = ''
     help = """Assumes
     1) this is being run from the root level of the Django site.
-    2) the presence of a county_stats directory, with files in it whose name (e.g. under_5) is the slug for a corresponding CountyStatType object.
-    The format of each file is:
+    2) the presence of a county_stats directory, with files in it whose name (e.g. under_5.csv) is the slug for a corresponding CountyStatType object.
+    3) the format of each file to be:
         Moretooth County, 4
         Northwest County, 123
         Nerve County, 13
         South County, 155
-    3) the existence of counties that correspond (case insensitive) to the county names in the file. 
+    4) the existence of counties that correspond (case insensitive) to the county names in the file. 
     """
     def handle(self, *args, **options):
         path_to_files = 'county_stats'
