@@ -24,66 +24,38 @@ def get_or_create_stat (county, column, val):
 
 class Command(BaseCommand):
     args = ''
-    help = ''
-    
-        
-    
+    help = """Assumes
+    1) this is being run from the root level of the Django site.
+    2) the presence of a county_stats directory, with files in it whose name (e.g. under_5) is the slug for a corresponding CountyStatType object.
+    The format of each file is:
+        Moretooth County, 4
+        Northwest County, 123
+        Nerve County, 13
+        South County, 155
+    3) the existence of counties that correspond (case insensitive) to the county names in the file. 
+    """
     def handle(self, *args, **options):
         path_to_files = 'county_stats'
         county_stat_columns =  os.listdir (path_to_files)
-        #(location,created) = Location.objects.get_or_create(name='H1',site=site)
-    
         errors = ""
         #TODO: make c.name tolower so lookup will be case-insensitive
         counties = dict([(c.name.lower(), c) for c in County.objects.all()])
-        columns = dict([(slugify(c.name), c) for c in CountyStatType.objects.all()])
-        
-        
-        #pdb.set_trace()
-        
+        stat_types = dict([(slugify(c.name), c) for c in CountyStatType.objects.all()])
         for filename in county_stat_columns:
-            print filename
-            column = filename.replace ('.csv', '')
-            #open the file
+            stat_slug = filename.replace ('.csv', '')
             reader = csv.reader(open("%s/%s" % (path_to_files, filename)))
-            
-            if column in columns.keys():
-                print "%s found in list of columns" % column
-                
-                var = raw_input("Replace values for column \"%s\" with the values in file \"%s\" ? (y/n)\n" % ( columns[column].name,  filename))
+            if stat_slug in stat_types.keys():
+                column_obj =  stat_types[stat_slug]
+                var = raw_input("Replace values for column \"%s\" with the values in file \"%s\" ? (y/n)\n" % ( column_obj.name,  filename))
                 if var == 'y':
                     for row in reader:
                         if row[0].lower() in counties.keys():
                             county_obj = counties[row[0].lower()]
-                            #pdb.set_trace()
-                            column_obj =  columns[column]
-                            print "%s found in list of counties" % row[0]
                             get_or_create_stat (county_obj, column_obj, row[1])
                         else:
                             print "%s not found in list of counties " % row[0]
+                else:
+                    print "OK; skipping file %s" % filename
             else:
-                print "%s not found in list of columns" % column
-                    
-                    
-            #pdb.set_trace()
-            #read in the whole file into a 2D array.
-            
-            #make a list of counties
-            
-            #assert the counties exist in the DB
-            
-            #assert the stats exist in the DB
-            
-            #prompt the user if they want to replace the values in the DB with the ones in the file
-            
-            #exit
-        
-            #(series,created) = Series.objects.get_or_create(name=column,location=location)
-            #reader = csv.reader(open("columns/%s.csv" % column))
-            #for row in reader:
-            #    datetime = row[0]
-            #    datum = row[1]
-            #    r = Row.objects.create(series=series,
-            #                           timestamp=datetime,
-            #                           value=datum)
+                print "Could not use this file: %s not found in list of columns" % stat_slug
 
