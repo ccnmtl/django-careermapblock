@@ -109,18 +109,12 @@ def add_layer(request,id):
         layer = form.save(commit=False)
         layer.cmap = cmap
         layer.save()
-    else:
-        print "form was not valid"
-        print form.errors
     return HttpResponseRedirect(reverse("edit-careermap-layers",args=[cmap.id]))
 
 
 
 @rendered_with('careermapblock/edit_layer.html')
 def edit_layer(request,id):
-
-    print "files is:"
-    print request.FILES
 
     layer = get_object_or_404(Layer,id=id)
     if request.method == "POST":
@@ -176,9 +170,6 @@ def add_basemap(request,id):
         basemap = form.save(commit=False)
         basemap.cmap = cmap
         basemap.save()
-    else:
-        print "form was not valid"
-        print form.errors
     return HttpResponseRedirect(reverse("edit-careermap-basemaps",args=[cmap.id]))
 
 @rendered_with('careermapblock/edit_basemap.html')
@@ -236,8 +227,6 @@ def add_county_stat_type(request,id):
         county_stat_type = form.save(commit=False)
         county_stat_type.cmap = cmap
         county_stat_type.save()
-    else:
-        print form.errors
     return HttpResponseRedirect(reverse("edit-careermap-county_stat_types",args=[cmap.id]))
 
 @rendered_with('careermapblock/edit_county_stat_type.html')
@@ -289,9 +278,6 @@ def add_county(request,id):
         county = form.save(commit=False)
         county.cmap = cmap
         county.save()
-    else:
-        print "form was not valid"
-        print form.errors
     return HttpResponseRedirect(reverse("edit-careermap-counties",args=[cmap.id]))
 
 @rendered_with('careermapblock/edit_county.html')
