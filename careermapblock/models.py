@@ -126,8 +126,16 @@ class CareerMap(models.Model):
         
     def question_json (self):
         """ Shows which questions to show, based on what basemaps and layers are selected"""
-        basemaps_to_questions = dict((q.basemap_id, q.id) for q in self.question_set.all() if q.basemap_id != None)
-        layers_to_questions   = dict((q.layer_id, q.id) for q in self.question_set.all() if q.layer_id != None)
+        
+        basemaps_to_questions = dict((question.basemap_id,[]) for question in self.question_set.all())
+        layers_to_questions = dict((question.layer_id,[]) for question in self.question_set.all())
+        
+        for question in self.question_set.all():
+            qid = question.id
+            if qid not in basemaps_to_questions[question.basemap_id]:
+                basemaps_to_questions[question.basemap_id].append (qid)
+            if qid not in layers_to_questions  [question.layer_id]:
+                layers_to_questions  [question.layer_id  ].append (qid)
         result = {'basemaps_to_questions': basemaps_to_questions, 'layers_to_questions': layers_to_questions}
         return json.dumps(result)
 

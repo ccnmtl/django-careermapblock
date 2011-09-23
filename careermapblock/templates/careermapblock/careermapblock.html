@@ -61,22 +61,18 @@ Choose base map:
 
 
 <div class="did_you_know_container">
-
-
-{%with block.question_set.all as questions%}
-    {%for question in questions %}
-    <div class ="did_you_know_title">{{question.text}}
-        <span class = "question_layer">
-            {{question.layer_id}}
-        </span>
-         <span class = "question_basemap">
-            {{question.basemap_id}}
-        </span>
-    </div>
-    {%endfor%}
-{%endwith%}
-
-
+    {%with block.question_set.all as questions%}
+        {%for question in questions %}
+        <div class ="did_you_know_title" id="question_{{question.id}}">{{question.text}}
+            <span class = "question_layer">
+                {{question.layer_id}}
+            </span>
+             <span class = "question_basemap">
+                {{question.basemap_id}}
+            </span>
+        </div>
+        {%endfor%}
+    {%endwith%}
 </div>
 
 </td>

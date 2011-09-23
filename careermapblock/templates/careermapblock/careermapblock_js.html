@@ -6,6 +6,9 @@
 jQuery(function() {
 		jQuery( ".careermaptabs" ).tabs();
         jQuery( ".careermap-layer").hide();
+        
+        update_questions();
+        update_columns();
                 
 	});
 	
@@ -28,13 +31,6 @@ function visible_basemap () {
 function column_ids_in_order () {
     return jQuery('.stat_id').map(function(a, b) { return parseInt(b.innerHTML);})
 }
-	
-	
-function update_questions() {
-    question_info = JSON.parse(jQuery('#question_json')[0].innerHTML);
-    the_visible_layers = visible_layers();
-    the_visible_basemap = visible_basemap();
-}	
 	
 function do_we_show_a_column_1 (column_id, basemaps_to_county_stats, the_visible_basemap) {
     //console.log ('Columns to show for each basemap: ' + JSON.stringify(basemaps_to_county_stats));
@@ -71,6 +67,10 @@ function update_array(arr, val) {
 function hide_all_columns () {
     jQuery('table#stats_table tr th').hide();
     jQuery('table#stats_table tr td').hide();
+    
+    //but do show the county names:    
+    jQuery('table#stats_table tr th:nth-child(1)').show()
+
 
 }
 
@@ -95,7 +95,6 @@ function update_columns() {
     column_indices_to_show = [];
     
     for (var i=0; i<the_column_ids_in_order.length; i++) {
-        console.log (i);
         cid = the_column_ids_in_order[i];
         if  (do_we_show_a_column_1 (cid, table_info['basemaps_to_county_stats'], visible_basemap())) {
             update_array (column_ids_to_show,     cid); // just for debugging
@@ -107,11 +106,45 @@ function update_columns() {
         }
     }
     
-    console.log (the_column_ids_in_order)
-    console.log (column_ids_to_show)
+    //console.log (the_column_ids_in_order)
+    //console.log (column_ids_to_show)
     show_only_stat_columns(column_indices_to_show);
 }
 
+
+function update_questions() {
+    question_info = JSON.parse(jQuery('#question_json')[0].innerHTML);
+    the_visible_layers = visible_layers();
+    the_visible_basemap = visible_basemap();
+    
+    
+    candidate_questions = []
+    console.log ('basemap is '+ the_visible_basemap); 
+    if (question_info['basemaps_to_questions'].hasOwnProperty (the_visible_basemap)) {
+        candidate_questions = question_info['basemaps_to_questions'][the_visible_basemap]
+    }
+    console.log ('basemap questions are ' + candidate_questions)
+    
+    for (var i=0; i<the_visible_layers.length; i++) {
+        lid = the_visible_layers[i]
+        if (question_info['layers_to_questions'].hasOwnProperty(lid)) {
+            questions_for_this_layer = question_info['layers_to_questions'][lid]
+            for (var i=0; i<questions_for_this_layer.length; i++) {
+                update_array(candidate_questions, questions_for_this_layer[i]);
+            }
+        }
+    }    
+    console.log ('layer *and* basemap questions are  ' + candidate_questions)
+    question_to_show = pick_ball_from_urn (candidate_questions);
+    jQuery('.did_you_know_title').hide();
+    jQuery('div#question_' + question_to_show).show()
+    
+}	
+
+function pick_ball_from_urn ( urn) { 
+    return (urn[  Math.floor ( Math.random() * urn.length )  ]);
+}
+	
 
 function update_basemap (menu) {
     jQuery('#1-basemap').attr('src',menu.value)
