@@ -5,6 +5,89 @@
 <script>
 jQuery(function() {
 		jQuery( ".careermaptabs" ).tabs();
-                jQuery( ".careermap-layer").hide();
+        jQuery( ".careermap-layer").hide();
+                
 	});
+	
+var visible_layers;
+
+function visible_layers() {
+    var realArray = jQuery.makeArray (jQuery('.careermap-layer:visible'))
+    return jQuery.map( realArray, function(el, i) {
+            return el.id.split ('-')[1];
+        }
+    );
+}
+
+
+function visible_basemap () {
+    return jQuery('.basemap_image:visible')[0].id.split('-')[0]
+}
+
+
+function column_ids_in_order () {
+    return jQuery('.stat_id').map(function(a, b) { return parseInt(b.innerHTML);})
+}
+	
+	
+function update_questions() {
+    question_info = JSON.parse(jQuery('#question_json')[0].innerHTML);
+    the_visible_layers = visible_layers();
+    the_visible_basemap = visible_basemap();
+}	
+	
+function do_we_show_a_column_1 (column_id, basemaps_to_county_stats, the_visible_basemap) {
+    // return column is in table_info['basemaps_to_county_stats'][the_visible_basemap]
+    return true;
+}
+
+function do_we_show_a_column_2 (column_id, layers_to_county_stats, the_visible_layers) {
+    // return column is in table_info['basemaps_to_county_stats'][the_visible_basemap]
+    // for each L in the_visible_layers:
+    //    if table_info['layers_to_county_stats'] then return true and return.
+    
+    return true;
+}
+	
+function update_array(arr, val) {
+    if arr.hasOwnProperty(val) {
+        return;
+    }
+    arr.push (val);
+}	
+	
+function update_columns() {
+    table_info = JSON.parse(jQuery('#table_json')[0].innerHTML);
+    the_visible_layers = visible_layers();
+    the_visible_basemap = visible_basemap();
+    the_column_ids_in_order = column_ids_in_order();
+    
+    column_ids_to_show = []
+    for (var i=0; i<the_column_ids_in_order.length; i++) {
+        cid = the_column_ids_in_order[i];
+        if  do_we_show_a_column_1 (cid, table_info['basemaps_to_county_stats'], the_visible_basemap) {
+            update_array (column_ids_to_show, cid);
+        }
+        if  do_we_show_a_column_2 (cid, table_info['basemaps_to_county_stats'], the_visible_basemap) {
+            update_array (column_ids_to_show, cid);
+        }   
+    }
+    
+}
+
+
+function update_basemap (menu) {
+    jQuery('#1-basemap').attr('src',menu.value)
+    basemap_id = jQuery('#1-basemap-control option:selected').attr('basemap_id');
+    update_questions();
+    update_columns();
+}
+
+
+function toggle_layer (layer_id) {
+    jQuery('#layer-' + layer_id).toggle();
+    update_questions();
+    update_columns();
+}
+
 </script>

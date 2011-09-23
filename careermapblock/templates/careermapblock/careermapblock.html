@@ -2,6 +2,17 @@
 {% load thumbnail %}
 
 
+<!-- which questions to show when basemaps and layers are turned on and off -->
+<div id="question_json">
+    {{block.question_json}}
+</div>
+
+<!-- which county stats to show when basemaps and layers are turned on and off -->
+<div id="table_json">
+    {{block.table_json}}
+</div>
+
+
 
 <div class="careermaptabs">
 <!--
@@ -21,16 +32,16 @@
 {{block.description|markdown}}
 </div>
 
-
+<div>
 Choose base map:
-<select id="{{block.id}}-basemap-control"
-onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
+</div>
+<select id="{{block.id}}-basemap-control" onchange="update_basemap (this)">
 <!--
 <option value="null">Choose Base Map</option> 
 -->
 <!-- what happens when you choose this? -->
 {% for basemap in block.basemap_set.all %}
-<option value="{% thumbnail basemap.image 600x600 %}">{{basemap.name}}</option>
+<option basemap_id="{{basemap.id}}" value="{% thumbnail basemap.image 600x600 %}">{{basemap.name}}</option>
 {% endfor %}
 </select><br />
 
@@ -41,7 +52,8 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 			      {{layer.color}};"> </div>
 </td>
 <td>
-<a href="#layer-{{layer.id}}" onclick="jQuery('#layer-{{layer.id}}').toggle()">{{layer.name}}    </a></li>
+
+<a href="#layer-{{layer.id}}" onclick="toggle_layer ({{layer.id}})">{{layer.name}}    </a></li>
 </td>
 </tr>
 {% endfor %}
@@ -49,15 +61,28 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 
 
 <div class="did_you_know_container">
-    <div class ="did_you_know_title">Did you know?</div>
-    <div class ="did_you_know_content">did you know that x?</div>
+
+
+{%with block.question_set.all as questions%}
+    {%for question in questions %}
+    <div class ="did_you_know_title">{{question.text}}
+        <span class = "question_layer">
+            {{question.layer_id}}
+        </span>
+         <span class = "question_basemap">
+            {{question.basemap_id}}
+        </span>
+    </div>
+    {%endfor%}
+{%endwith%}
+
 
 </div>
 
 </td>
 <td>
 <div id="{{block.id}}-base" class="careermap-base">
-<img id="{{block.id}}-basemap" alt="career map" src="{% thumbnail block.default_base_map.image 600x600 %}" />
+<img class="basemap_image"  id="{{block.id}}-basemap" alt="career map" src="{% thumbnail block.default_base_map.image 600x600 %}"/>
 
 {% for layer in block.layer_set.all %}
 <img id="layer-{{layer.id}}" src="/uploads/{{layer.image}}"
@@ -67,14 +92,11 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 </div>
 
 
-<div>
-
+<div class ="table_container">
 {%with block.per_county_stats as stats%}
 <table >
-
-
 <tr>
-    <th>Statistic</th>
+    <th>&nbsp;</th>
     {%for s in stats.stat_type_list %}
         <th>{{s}} <span class="stat_id_container">(#<span class ="stat_id">{{s.id}}</span>)</span></th>
     {%endfor %}
@@ -118,7 +140,8 @@ onchange="jQuery('#{{block.id}}-basemap').attr('src',this.value)">
 </div>
 
 </td>
-</tr></table>
+</tr>
+</table>
 
 
 

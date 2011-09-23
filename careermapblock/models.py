@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from sorl.thumbnail.fields import ImageWithThumbnailsField
-import os
+import os, json
 
 class CareerMap(models.Model):
     pageblocks = generic.GenericRelation(PageBlock)
@@ -71,7 +71,6 @@ class CareerMap(models.Model):
     def update_questions_order(self,question_ids):
         self.set_question_order(question_ids)
 
-
     def add_layer_form(self,request=None,files=None):
         return LayerForm(request,files)
 
@@ -89,7 +88,6 @@ class CareerMap(models.Model):
 
     def update_counties_order(self,county_ids):
         self.set_county_order(county_ids)
-
 
     def add_county_stat_type_form(self,request=None):
         return CountyStatTypeForm(request)
@@ -123,6 +121,35 @@ class CareerMap(models.Model):
                 result ['counties'][county] = [ county.value_of_stat (t) for t in stat_type_list ]
                         
         return result
+        
+        
+        
+    def question_json (self):
+        """ Shows which questions to show, based on what basemaps and layers are selected"""
+        basemaps_to_questions = dict((q.basemap_id, q.id) for q in self.question_set.all() if q.basemap_id != None)
+        layers_to_questions   = dict((q.layer_id, q.id) for q in self.question_set.all() if q.layer_id != None)
+        result = {'basemaps_to_questions': basemaps_to_questions, 'layers_to_questions': layers_to_questions}
+        return json.dumps(result)
+
+        
+    def table_json (self):
+        """ Shows which columns of county statistics to show in the table, based on what basemaps and layers are selected"""
+        # for each basemap id, give the id's of the stats to show if it's turned on:
+        basemaps_to_county_stats = dict(
+                [(b.id, [cst.id for cst in b.county_stat_types.all()]) # each basemap's stat columns
+                for b in self.basemap_set.all()                        # for all basemap
+                if len(b.county_stat_types.all()) != 0]                # don't bother if the basemap doesn't show any.
+        )
+        
+        # ... and for each layer id, give the id's of the stats to show if it's turned on:
+        layers_to_county_stats = dict(
+            [(l.id, [cst.id for cst in l.county_stat_types.all()])    # each layer's stat columns
+            for l in self.layer_set.all()                             # for all layers
+            if len(l.county_stat_types.all()) != 0]                   # don't bother if the layer doesn't show any.
+        )
+        
+        result = {'basemaps_to_county_stats': basemaps_to_county_stats, 'layers_to_county_stats': layers_to_county_stats}
+        return json.dumps(result)
 
 class CountyStatType(models.Model):
     """County_stat_type
