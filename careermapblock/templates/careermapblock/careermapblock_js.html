@@ -21,7 +21,7 @@ function visible_layers() {
 
 
 function visible_basemap () {
-    return jQuery('.basemap_image:visible')[0].id.split('-')[0]
+    return jQuery("select#1-basemap-control option:selected").attr('basemap_id');
 }
 
 
@@ -37,42 +37,79 @@ function update_questions() {
 }	
 	
 function do_we_show_a_column_1 (column_id, basemaps_to_county_stats, the_visible_basemap) {
-    // return column is in table_info['basemaps_to_county_stats'][the_visible_basemap]
-    return true;
+    //console.log ('Columns to show for each basemap: ' + JSON.stringify(basemaps_to_county_stats));
+    //console.log ('The visible basemap: ' + the_visible_basemap);
+    bid = the_visible_basemap;
+    if (basemaps_to_county_stats.hasOwnProperty(bid)) {
+        if (basemaps_to_county_stats [bid].indexOf (column_id) != -1) {
+            console.log ("Column " + column_id + " found in the list of columns " + basemaps_to_county_stats [bid] +  " for basemap " + bid );
+            return true;
+        }
+    }
+    return false
 }
 
 function do_we_show_a_column_2 (column_id, layers_to_county_stats, the_visible_layers) {
-    // return column is in table_info['basemaps_to_county_stats'][the_visible_basemap]
-    // for each L in the_visible_layers:
-    //    if table_info['layers_to_county_stats'] then return true and return.
-    
-    return true;
+    //console.log ('Columns to show for each layer: ' + JSON.stringify(layers_to_county_stats));
+    for (var i=0; i<the_visible_layers.length; i++) {
+        lid = the_visible_layers[i];
+        if (layers_to_county_stats.hasOwnProperty(lid)) {
+            if (layers_to_county_stats [lid].indexOf (column_id) != -1) {
+                console.log ("Column " + column_id + " found in the list of columns " + layers_to_county_stats [lid] +  " for layer " + lid );
+                return true;
+            }
+        }
+    }
+    return false;
 }
 	
 function update_array(arr, val) {
-    if arr.hasOwnProperty(val) {
-        return;
-    }
-    arr.push (val);
-}	
-	
+    if (arr.indexOf(val) == -1) { arr.push (val); }
+}
+
+
+function hide_all_columns () {
+    jQuery('table#stats_table tr th').hide();
+    jQuery('table#stats_table tr td').hide();
+
+}
+
+function nth_column_of_stats_table(n) {
+    // argument n is 0-based numbering.
+    // css uses 1-based numbering. add 1
+    // we have a heading column; that doesn't count. add 1 again:
+    child_number = n + 2;
+    return jQuery('table#stats_table tr td:nth-child(' + child_number + '), table#stats_table tr th:nth-child(' + child_number + ')');
+}
+
+function show_only_stat_columns (array_of_column_indices_to_show) {
+    hide_all_columns();
+    array_of_column_indices_to_show.map(function (a) { nth_column_of_stats_table(a).show() })
+}
+
+
 function update_columns() {
     table_info = JSON.parse(jQuery('#table_json')[0].innerHTML);
-    the_visible_layers = visible_layers();
-    the_visible_basemap = visible_basemap();
     the_column_ids_in_order = column_ids_in_order();
+    column_ids_to_show = [];
+    column_indices_to_show = [];
     
-    column_ids_to_show = []
     for (var i=0; i<the_column_ids_in_order.length; i++) {
+        console.log (i);
         cid = the_column_ids_in_order[i];
-        if  do_we_show_a_column_1 (cid, table_info['basemaps_to_county_stats'], the_visible_basemap) {
-            update_array (column_ids_to_show, cid);
+        if  (do_we_show_a_column_1 (cid, table_info['basemaps_to_county_stats'], visible_basemap())) {
+            update_array (column_ids_to_show,     cid); // just for debugging
+            update_array (column_indices_to_show, i  );
         }
-        if  do_we_show_a_column_2 (cid, table_info['basemaps_to_county_stats'], the_visible_basemap) {
-            update_array (column_ids_to_show, cid);
-        }   
+        if  (do_we_show_a_column_2 (cid, table_info['layers_to_county_stats'],   visible_layers())) {
+            update_array (column_ids_to_show,     cid); // just for debugging
+            update_array (column_indices_to_show, i  );
+        }
     }
     
+    console.log (the_column_ids_in_order)
+    console.log (column_ids_to_show)
+    show_only_stat_columns(column_indices_to_show);
 }
 
 
