@@ -339,7 +339,13 @@ class County(models.Model):
 
     def value_of_stat (self, the_stat_type):
         try:
-            return CountyStatValue.objects.get(county=self, stat_type = the_stat_type).value
+            raw_val = CountyStatValue.objects.get(county=self, stat_type = the_stat_type).value
+            nice_val = raw_val
+            if raw_val < 1:
+                nice_val = '%.1f%s' % ((raw_val * 100), "%")
+            else:
+                nice_val =  '%d' % raw_val
+            return nice_val
         except:
             return None
       

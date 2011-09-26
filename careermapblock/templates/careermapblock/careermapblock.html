@@ -1,5 +1,7 @@
 {% load markup %}
 {% load thumbnail %}
+{% load smartif %}
+{% load humanize %}
 
 
 <!-- which questions to show when basemaps and layers are turned on and off -->
@@ -126,7 +128,7 @@ Choose base map:
 <tr>
     <th>{{county}}</th>
     {%for value in stat_values %}
-            <td>{{value}}</td>
+            <td>{{value|intcomma}}</td>
     {%endfor %}
 </tr>
 {%endfor %}

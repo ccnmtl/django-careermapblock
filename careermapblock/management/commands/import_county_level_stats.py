@@ -9,7 +9,7 @@ def slugify(val):
     val = unicode(_slugify_strip_re.sub('', val).strip().lower())
     return _slugify_hyphenate_re.sub('_', val)
 
-def get_or_create_stat (county, column, val):
+def get_or_create_stat (county, column, val_str):
     stat_value = None
     try:
         stat_value = CountyStatValue.objects.get(county__name=county, stat_type__name = column)
@@ -18,10 +18,17 @@ def get_or_create_stat (county, column, val):
         stat_value.cmap_id = county.cmap_id
         stat_value.county = county
         stat_value.stat_type = column
-    print "Setting value of stat %s to %s for county %s" % (column, val, county)
+    print "Setting value of stat %s to %s for county %s" % (column, val_str, county)
+    
+    if '%' in val_str:
+        val = float(val_str.replace('%', ''))/100
+    else:
+        val = float(val_str)
+    
     stat_value.value = val
-    stat_value.save()    
-
+    stat_value.save()
+        
+        
 class Command(BaseCommand):
     args = ''
     help = """Assumes
