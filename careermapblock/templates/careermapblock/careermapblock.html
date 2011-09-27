@@ -49,14 +49,13 @@ Choose base map:
 
 <table class="layer-controls">
 {% for layer in block.layer_set.all %}
-<tr>
-<td><div class="layer-box" style="background-color:
-			      {{layer.color}};"> </div>
-</td>
-<td>
-
-<a href="#layer-{{layer.id}}" onclick="toggle_layer ({{layer.id}})">{{layer.name}}    </a></li>
-</td>
+<tr id="show_layer_{{layer.id}}" >
+    <td><div class="layer-box" style="background-color:
+			          {{layer.color}};"> </div>
+    </td>
+    <td>
+        <a href="#layer-{{layer.id}}" onclick="toggle_layer ({{layer.id}})">{{layer.name}}    </a></li>
+    </td>
 </tr>
 {% endfor %}
 </table>

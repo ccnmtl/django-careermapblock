@@ -6,10 +6,8 @@
 jQuery(function() {
 		jQuery( ".careermaptabs" ).tabs();
         jQuery( ".careermap-layer").hide();
-        
         update_questions();
         update_columns();
-                
 	});
 	
 var visible_layers;
@@ -38,7 +36,7 @@ function do_we_show_a_column_1 (column_id, basemaps_to_county_stats, the_visible
     bid = the_visible_basemap;
     if (basemaps_to_county_stats.hasOwnProperty(bid)) {
         if (basemaps_to_county_stats [bid].indexOf (column_id) != -1) {
-            console.log ("Column " + column_id + " found in the list of columns " + basemaps_to_county_stats [bid] +  " for basemap " + bid );
+            //console.log ("Column " + column_id + " found in the list of columns " + basemaps_to_county_stats [bid] +  " for basemap " + bid );
             return true;
         }
     }
@@ -51,7 +49,7 @@ function do_we_show_a_column_2 (column_id, layers_to_county_stats, the_visible_l
         lid = the_visible_layers[i];
         if (layers_to_county_stats.hasOwnProperty(lid)) {
             if (layers_to_county_stats [lid].indexOf (column_id) != -1) {
-                console.log ("Column " + column_id + " found in the list of columns " + layers_to_county_stats [lid] +  " for layer " + lid );
+                //console.log ("Column " + column_id + " found in the list of columns " + layers_to_county_stats [lid] +  " for layer " + lid );
                 return true;
             }
         }
@@ -134,7 +132,7 @@ function update_questions() {
             }
         }
     }    
-    console.log ('layer *and* basemap questions are  ' + candidate_questions)
+    //console.log ('layer *and* basemap questions are  ' + candidate_questions)
     question_to_show = pick_ball_from_urn (candidate_questions);
     jQuery('.did_you_know_title').hide();
     jQuery('div#question_' + question_to_show).show()
@@ -156,6 +154,7 @@ function update_basemap (menu) {
 
 function toggle_layer (layer_id) {
     jQuery('#layer-' + layer_id).toggle();
+    jQuery('#show_layer_' + layer_id).toggleClass('selected_layer')
     update_questions();
     update_columns();
 }
