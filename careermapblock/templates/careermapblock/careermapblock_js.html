@@ -3,12 +3,44 @@
 	type="text/javascript"></script> 
 
 <script>
+var showingCareerMap = true;
+
+var careerMapBlockPageBlockDiv = function () {
+    return jQuery(".careermapblock").parent();
+};
+
+var toggleCareerMap = function () {
+   if (showingCareerMap) {
+     jQuery(".pageblock").show();
+     jQuery(".careermapblock").hide();
+     jQuery("#hide-show-label").text("Show Data");
+     showingCareerMap = false;
+   } else {
+     jQuery(".pageblock").hide();
+     jQuery(".careermapblock").show();
+     careerMapBlockPageBlockDiv().show();
+     jQuery("#hide-show-label").text("Hide Data");
+     showingCareerMap = true;
+   }
+};
+
+
 jQuery(function() {
-		jQuery( ".careermaptabs" ).tabs();
+	jQuery( ".careermaptabs" ).tabs();
         jQuery( ".careermap-layer").hide();
         update_questions();
         update_columns();
-	});
+        if (jQuery(".pageblock").length > 1) {
+          jQuery(".pageblock").hide();
+          jQuery(".careermapblock").show();
+          careerMapBlockPageBlockDiv().show();
+          jQuery("#hide-show-label").click(toggleCareerMap);
+       } else {
+          jQuery("#hide-show-label").hide();
+       }
+});
+
+
 	
 var visible_layers;
 
@@ -158,5 +190,6 @@ function toggle_layer (layer_id) {
     update_questions();
     update_columns();
 }
+
 
 </script>
