@@ -27,17 +27,20 @@ var toggleCareerMap = function () {
 
 jQuery(function() {
 	jQuery( ".careermaptabs" ).tabs();
-        jQuery( ".careermap-layer").hide();
-        update_questions();
-        update_columns();
-        if (jQuery(".pageblock").length > 1) {
-          jQuery(".pageblock").hide();
-          jQuery(".careermapblock").show();
-          careerMapBlockPageBlockDiv().show();
-          jQuery("#hide-show-label").click(toggleCareerMap);
-       } else {
-          jQuery("#hide-show-label").hide();
-       }
+    jQuery( ".careermap-layer").hide();
+    update_questions();
+    update_columns();
+    if (jQuery(".pageblock").length > 1) {
+      jQuery(".pageblock").hide();
+      jQuery(".careermapblock").show();
+      careerMapBlockPageBlockDiv().show();
+      jQuery("#hide-show-label").click(toggleCareerMap);
+   } else {
+      jQuery("#hide-show-label").hide();
+   }
+   // adding this (experimental, for Liz) to give a css scope denoting the outermost pageblock
+   // on any place that contains a pageblock.
+   jQuery(jQuery('.pageblock:visible')[0]).addClass ('outermost_pageblock_on_current_careermap_page');
 });
 
 
