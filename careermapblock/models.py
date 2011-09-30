@@ -53,9 +53,6 @@ class CareerMap(models.Model):
     def create(self,request):
         return CareerMap.objects.create(description=request.POST.get('description', ''))
 
-    def needs_submit(self):
-        return True
-
     def submit(self,user,data):
         pass
 
