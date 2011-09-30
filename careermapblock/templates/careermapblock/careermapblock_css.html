@@ -43,9 +43,35 @@ input {
     overflow:auto;
 }
 
-.selected_layer {
-    bgcolor:"#ff6600";
-    font-size: 120%;
+.table_container tr td, .table_container tr th {
+    white-space:nowrap;
+}
+
+.layer-controls tr td a{
+    color: #999999;
+
+}
+
+.layer-controls tr.selected_layer td a {
+    color: #000000;
+}
+
+tr.selected_layer div.layer-box {
+    /*background-image: url("http://kang.ccnmtl.columbia.edu:7894/site_media/css/../img/uncharted_logo.png"); */
+    background: url("../../../site_media/img/tick.png") no-repeat scroll left 0px transparent;
+    background-repeat: no-repeat;
+    display: block;  /* may not need this, but I've found I do */
+
+}
+
+
+.did_you_know_title {
+   height: 150px;  /* do we still need this? */
+   font-size:80%;
+}
+
+#left_hand_td, #right_hand_td {
+    vertical-align:top;
 }
 
 </style>

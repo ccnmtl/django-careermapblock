@@ -149,11 +149,11 @@ function update_questions() {
     
     
     candidate_questions = []
-    console.log ('basemap is '+ the_visible_basemap); 
+    //console.log ('basemap is '+ the_visible_basemap); 
     if (question_info['basemaps_to_questions'].hasOwnProperty (the_visible_basemap)) {
         candidate_questions = question_info['basemaps_to_questions'][the_visible_basemap]
     }
-    console.log ('basemap questions are ' + candidate_questions)
+    //console.log ('basemap questions are ' + candidate_questions)
     
     for (var i=0; i<the_visible_layers.length; i++) {
         lid = the_visible_layers[i]
