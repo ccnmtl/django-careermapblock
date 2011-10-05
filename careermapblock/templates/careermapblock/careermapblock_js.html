@@ -27,7 +27,10 @@ var toggleCareerMap = function () {
 
 jQuery(function() {
 	jQuery( ".careermaptabs" ).tabs();
-    jQuery( ".careermap-layer").hide();
+	
+    // moving this to CSS; as of now, not ALL careermap-layers are supposed to be hidden.
+    //jQuery( ".careermap-layer").hide();
+    
     update_questions();
     update_columns();
     if (jQuery(".pageblock").length > 1) {

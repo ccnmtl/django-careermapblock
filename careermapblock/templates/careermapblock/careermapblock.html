@@ -28,9 +28,9 @@
 {{block.description|markdown}}
 </div>
 
-<div>
+<h5>
 Choose base map:
-</div>
+</h5>
 <select id="{{block.id}}-basemap-control" onchange="update_basemap (this)">
 <!--
 <option value="null">Choose Base Map</option> 
@@ -40,7 +40,9 @@ Choose base map:
 <option basemap_id="{{basemap.id}}" value="{% thumbnail basemap.image 600x600 %}">{{basemap.name}}</option>
 {% endfor %}
 </select><br />
-
+<h5>
+Show layers:
+</h5>
 <table class="layer-controls">
 {% for layer in block.layer_set.all %}
 <tr id="show_layer_{{layer.id}}" >
@@ -75,9 +77,16 @@ Choose base map:
 <div id="{{block.id}}-base" class="careermap-base">
 <img class="basemap_image"  id="{{block.id}}-basemap" alt="career map" src="{% thumbnail block.default_base_map.image 600x600 %}"/>
 
+
+<!-- These are the layers that never get hidden: the borders of the counties and the general labels. -->
+<img src="/site_media/img/county_borders.png" class="careermap-layer" />
+<img src="/site_media/img/general_labels.png" class="careermap-layer" />
+
+
+<!-- These are the layers that you can show and hide and show up on the list of layers. -->
 {% for layer in block.layer_set.all %}
 <img id="layer-{{layer.id}}" src="/uploads/{{layer.image}}"
-     class="careermap-layer" />
+     class="careermap-layer show_and_hideable" />
 {% endfor %}
 
 </div>
