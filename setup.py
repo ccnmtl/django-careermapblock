@@ -27,7 +27,7 @@ from setuptools import setup
 
 setup(
     name="django-careermapblock",
-    version="0.2.13",
+    version="0.2.14",
     author="Anders Pearson",
     author_email="anders@columbia.edu",
     url="",

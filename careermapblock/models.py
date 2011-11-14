@@ -60,7 +60,7 @@ class CareerMap(models.Model):
         return True
 
     def unlocked(self,user):
-        return False
+        return True
 
     def add_question_form(self,request=None):
         return QuestionForm(request)
