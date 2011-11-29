@@ -104,9 +104,8 @@ class CareerMap(models.Model):
             all_stat_types.update(layer.county_stat_types.all())
         for basemap in self.basemap_set.all():
             all_stat_types.update(basemap.county_stat_types.all())
-        #import pdb
-        #pdb.set_trace()
         stat_type_list = list(all_stat_types)
+        stat_type_list = sorted(stat_type_list, key=lambda it: it._order)
         
         result = {'stat_type_list' : stat_type_list, 'counties' : {} }
         
