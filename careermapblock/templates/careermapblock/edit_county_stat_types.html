@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
 var saveOrder = function() {
-    var url = "{% url reorder-careermap-county_stat_types cmap.id %}?";
+    var url = "{% url 'reorder-careermap-county_stat_types' cmap.id %}?";
     var worktodo = 0;
     jQuery("#county_stat_types li").each(function(index,element) {
        worktodo = 1;
@@ -44,9 +44,9 @@ var saveOrder = function() {
 <ul id="county_stat_types" class="dragparent">
 {% for county_stat_type in cmap.countystattype_set.all %}
     <li class="draggable" id="county_stat_type-{{county_stat_type.id}}">
-    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url delete-careermap-county_stat_type county_stat_type.id %}">delete</a>] 
+    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url 'delete-careermap-county_stat_type' county_stat_type.id %}">delete</a>] 
      Column
-    <a href="{% url edit-careermap-county_stat_type county_stat_type.id %}">{{county_stat_type.name|truncatewords:5}}</a>
+    <a href="{% url 'edit-careermap-county_stat_type' county_stat_type.id %}">{{county_stat_type.name|truncatewords:5}}</a>
     shown on basemaps: {{county_stat_type.basemap_set.all}} and layers: {{county_stat_type.layer_set.all}}
 </li>
 {% endfor %}
@@ -55,7 +55,7 @@ var saveOrder = function() {
     <strong>Note:</strong> To associate a column of stats with a basemap or a layer, so that it shows up in the table underneath the map, you need to edit the basemap or layer and make sure that stat column is selected.
 </div>
 
-<form action="{% url edit-careermap-add-county_stat_type cmap.id %}"
+<form action="{% url 'edit-careermap-add-county_stat_type' cmap.id %}"
       method="post" enctype="multipart/form-data">
 <h2>Add a column of per-county statistics:</h2>
 <table width="100%">

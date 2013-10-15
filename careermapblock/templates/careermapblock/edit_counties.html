@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
 var saveOrder = function() {
-    var url = "{% url reorder-careermap-counties cmap.id %}?";
+    var url = "{% url 'reorder-careermap-counties' cmap.id %}?";
     var worktodo = 0;
     jQuery("#counties li").each(function(index,element) {
        worktodo = 1;
@@ -44,15 +44,15 @@ var saveOrder = function() {
 <ul id="counties" class="dragparent">
 {% for county in cmap.county_set.all %}
     <li class="draggable" id="county-{{county.id}}">
-    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url delete-careermap-county county.id %}">delete</a>] 
+    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url 'delete-careermap-county' county.id %}">delete</a>] 
     County {{ county.display_number }}: 
-    <a href="{% url edit-careermap-county county.id %}">{{county.name|truncatewords:5}}</a>
+    <a href="{% url 'edit-careermap-county' county.id %}">{{county.name|truncatewords:5}}</a>
 </li>
 
 {% endfor %}
 </ul>
 
-<form action="{% url edit-careermap-add-county cmap.id %}"
+<form action="{% url 'edit-careermap-add-county' cmap.id %}"
       method="post" enctype="multipart/form-data">
 <h2>Add County</h2>
 <table width="100%">

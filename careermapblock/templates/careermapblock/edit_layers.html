@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
 var saveOrder = function() {
-    var url = "{% url reorder-careermap-layers cmap.id %}?";
+    var url = "{% url 'reorder-careermap-layers' cmap.id %}?";
     var worktodo = 0;
     jQuery("#layers li").each(function(index,element) {
        worktodo = 1;
@@ -44,16 +44,16 @@ var saveOrder = function() {
 <ul id="layers" class="dragparent">
 {% for layer in cmap.layer_set.all %}
     <li class="draggable" id="layer-{{layer.id}}">
-    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url delete-careermap-layer layer.id %}">delete</a>] 
+    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url 'delete-careermap-layer' layer.id %}">delete</a>] 
     Layer {{ layer.display_number }}: 
-    <a href="{% url edit-careermap-layer layer.id %}">{{layer.name|truncatewords:5}}</a>
+    <a href="{% url 'edit-careermap-layer' layer.id %}">{{layer.name|truncatewords:5}}</a>
     <div class="layer-box" style="background-color: {{layer.color}};"></div>
 </li>
 
 {% endfor %}
 </ul>
 
-<form action="{% url edit-careermap-add-layer cmap.id %}"
+<form action="{% url 'edit-careermap-add-layer' cmap.id %}"
       method="post" enctype="multipart/form-data">
 <h2>Add Layer</h2>
 <table width="100%">

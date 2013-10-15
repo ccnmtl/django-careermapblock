@@ -9,7 +9,7 @@
 
 <script type="text/javascript">
 var saveOrder = function() {
-    var url = "{% url reorder-careermap-basemaps cmap.id %}?";
+    var url = "{% url 'reorder-careermap-basemaps' cmap.id %}?";
     var worktodo = 0;
     jQuery("#basemaps li").each(function(index,element) {
        worktodo = 1;
@@ -44,15 +44,15 @@ var saveOrder = function() {
 <ul id="basemaps" class="dragparent">
 {% for basemap in cmap.basemap_set.all %}
     <li class="draggable" id="basemap-{{basemap.id}}">
-    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url delete-careermap-basemap basemap.id %}">delete</a>] 
+    <span title="drag to reorder pageblocks" class="draghandle ui-icon ui-icon-arrowthick-2-n-s"></span>[<a href="{% url 'delete-careermap-basemap' basemap.id %}">delete</a>] 
     Basemap {{ basemap.display_number }}: 
-    <a href="{% url edit-careermap-basemap basemap.id %}">{{basemap.name|truncatewords:5}}</a>
+    <a href="{% url 'edit-careermap-basemap' basemap.id %}">{{basemap.name|truncatewords:5}}</a>
 </li>
 
 {% endfor %}
 </ul>
 
-<form action="{% url edit-careermap-add-basemap cmap.id %}"
+<form action="{% url 'edit-careermap-add-basemap' cmap.id %}"
       method="post" enctype="multipart/form-data">
 <h2>Add Basemap</h2>
 <table width="100%">

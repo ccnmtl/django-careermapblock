@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2><a href="{% url edit-careermap-questions question.cmap.id %}">Career Map</a> Question {{question.display_number}}: {{ question.text }}</h2>
+<h2><a href="{% url 'edit-careermap-questions' question.cmap.id %}">Career Map</a> Question {{question.display_number}}: {{ question.text }}</h2>
 
 <form action="." method="post">
 <table width="100%">
