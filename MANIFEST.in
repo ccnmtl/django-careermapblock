@@ -1,1 +1,14 @@
 recursive-include careermapblock/ *
+include careermapblock/templates/careermapblock/edit_layer.html
+include careermapblock/templates/careermapblock/edit_layers.html
+include careermapblock/templates/careermapblock/careermapblock.html
+include careermapblock/templates/careermapblock/edit_county_stat_types.html
+include careermapblock/templates/careermapblock/careermapblock_css.html
+include careermapblock/templates/careermapblock/edit_basemaps.html
+include careermapblock/templates/careermapblock/edit_county_stat_type.html
+include careermapblock/templates/careermapblock/edit_question.html
+include careermapblock/templates/careermapblock/edit_questions.html
+include careermapblock/templates/careermapblock/edit_basemap.html
+include careermapblock/templates/careermapblock/edit_counties.html
+include careermapblock/templates/careermapblock/edit_county.html
+include careermapblock/templates/careermapblock/careermapblock_js.html
