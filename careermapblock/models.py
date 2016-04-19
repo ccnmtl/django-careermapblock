@@ -1,6 +1,6 @@
 from django.db import models
 from pagetree.models import PageBlock
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django import forms
 from datetime import datetime
 from django.core.urlresolvers import reverse
@@ -12,7 +12,7 @@ import json
 
 
 class CareerMap(models.Model):
-    pageblocks = generic.GenericRelation(PageBlock)
+    pageblocks = GenericRelation(PageBlock)
     description = models.TextField(blank=True)
     template_file = "careermapblock/careermapblock.html"
     js_template_file = "careermapblock/careermapblock_js.html"
